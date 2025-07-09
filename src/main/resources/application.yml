@@ -1,0 +1,54 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: weather-app
+  config:
+    import: optional:file:.env[.properties]
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:weatherapp}
+    username: ${DB_USERNAME:weatherapp}
+    password: ${DB_PASSWORD:weatherapp123}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.spatial.dialect.postgis.PostgisPG95Dialect
+        format_sql: true
+
+  task:
+    execution:
+      pool:
+        core-size: ${THREAD_POOL_SIZE:10}
+        max-size: 20
+        queue-capacity: 100
+
+openweather:
+  api:
+    key: ${OPENWEATHER_API_KEY}
+    base-url: ${OPENWEATHER_BASE_URL:https://api.openweathermap.org/data/2.5}
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+logging:
+  level:
+    com.weatherapp: DEBUG
+    org.springframework.web: DEBUG
